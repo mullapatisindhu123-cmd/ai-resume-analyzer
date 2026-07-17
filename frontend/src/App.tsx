@@ -20,7 +20,8 @@ type ApiResponse = {
 function App() {
   const [resumeFile, setResumeFile] = useState<File | null>(null)
   const [resumeText, setResumeText] = useState('')
-  const [jdText, setJdText] = useState('React\nTypeScript\nRedux\nAWS\nDocker')
+  const [jdText, setJdText] = useState('')
+  const [isJobDescriptionExample, setIsJobDescriptionExample] = useState(false)
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,8 +43,36 @@ function App() {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     setError(null)
+    setResult(null)
     const file = event.target.files?.[0] ?? null
     setResumeFile(file)
+  }
+
+  const handleResumeTextChange = (value: string) => {
+    setError(null)
+    setResult(null)
+    setResumeText(value)
+  }
+
+  const handleJobDescriptionChange = (value: string) => {
+    setError(null)
+    setResult(null)
+    setIsJobDescriptionExample(false)
+    setJdText(value)
+  }
+
+  const useJobDescriptionExample = () => {
+    setError(null)
+    setResult(null)
+    setIsJobDescriptionExample(true)
+    setJdText(`React\nTypeScript\nRedux\nREST APIs\nAWS\nDocker\nKubernetes\nAutomated testing`)
+  }
+
+  const clearJobDescriptionExample = () => {
+    setError(null)
+    setResult(null)
+    setIsJobDescriptionExample(false)
+    setJdText('')
   }
 
   const analyzeResume = async () => {
@@ -135,8 +164,8 @@ function App() {
             <div className="section-title">Paste Resume Text</div>
             <textarea
               value={resumeText}
-              onChange={(event) => setResumeText(event.target.value)}
-              placeholder="Paste resume text here if upload isn't available."
+              onChange={(event) => handleResumeTextChange(event.target.value)}
+              placeholder="Example: Skills: React, TypeScript, Git. Experience: Built responsive web applications and REST APIs."
               aria-label="Resume text"
             />
           </div>
@@ -149,13 +178,26 @@ function App() {
           </div>
 
           <div className="card-section">
-            <div className="section-title">Paste the job description</div>
+            <div className="input-heading">
+              <div className="section-title">Paste the job description</div>
+              {isJobDescriptionExample ? (
+                <button type="button" className="clear-example-button" onClick={clearJobDescriptionExample}>
+                  Clear example
+                </button>
+              ) : (
+                <button type="button" className="example-button" onClick={useJobDescriptionExample}>
+                  Use an example
+                </button>
+              )}
+            </div>
             <textarea
               value={jdText}
-              onChange={(event) => setJdText(event.target.value)}
-              placeholder="React\nTypeScript\nAWS\nDocker\nKubernetes"
+              onChange={(event) => handleJobDescriptionChange(event.target.value)}
+              placeholder={'Example required skills (one per line):\nReact\nTypeScript\nRedux\nREST APIs\nAWS\nDocker'}
               aria-label="Job description text"
+              className={isJobDescriptionExample ? 'example-text' : undefined}
             />
+            <p className="field-hint">Add the full role description or a simple list of required skills. The example is optional.</p>
           </div>
         </article>
       </section>
@@ -221,7 +263,10 @@ function App() {
               <div
                 className={`progress-fill ${scoreColor}`}
                 style={{ width: `${result?.matchPercentage ?? 0}%` }}
-              />
+            />
+            <p className="score-caption">
+              {result ? `${result.matchedSkills.length} of ${result.jdSkills.length} required skills matched` : 'Analyze a resume to calculate the score.'}
+            </p>
             </div>
           </article>
 
@@ -239,13 +284,32 @@ function App() {
           </div>
           <div className="card-body">
             {result ? (
-              <ul className="explanation-list">
-                {result.reasons.map((reason, index) => (
-                  <li key={index}>{reason}</li>
-                ))}
-              </ul>
+              <div className="insights-grid">
+                <div className="insight-block">
+                  <h3>How the percentage is calculated</h3>
+                  <p><strong>{result.matchedSkills.length} matched skills ÷ {result.jdSkills.length} required skills × 100 = {result.matchPercentage}%</strong></p>
+                  <p>Every required skill has equal weight. The result is rounded to the nearest whole percentage.</p>
+                </div>
+                <div className="insight-block">
+                  <h3>Required skill set</h3>
+                  <div className="metric-list">
+                    {result.jdSkills.map((skill) => <span key={skill} className="metric-chip required">{skill}</span>)}
+                  </div>
+                </div>
+                <div className="insight-block">
+                  <h3>How your resume is analyzed</h3>
+                  <p>The analyzer reads short skill entries separated by lines, commas, bullets, or semicolons in your resume and job description. It then compares entries case-insensitively.</p>
+                  <p>It reports skills present in both, highlights required skills not found, and assigns a fit verdict: Qualified (80%+), Almost There (50–79%), or Not Yet (below 50%). Use one skill per line for the most accurate comparison.</p>
+                </div>
+                <div className="insight-block">
+                  <h3>Summary</h3>
+                  <ul className="explanation-list">
+                    {result.reasons.map((reason, index) => <li key={index}>{reason}</li>)}
+                  </ul>
+                </div>
+              </div>
             ) : (
-              <p className="placeholder-text">AI reasoning will appear here once the analysis completes.</p>
+              <p className="placeholder-text">Add your resume and job description, then select Analyze Resume. Your required skills, matches, score calculation, and tailored explanation will appear here.</p>
             )}
           </div>
         </article>
