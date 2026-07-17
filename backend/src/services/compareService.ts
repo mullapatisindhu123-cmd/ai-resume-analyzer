@@ -1,4 +1,4 @@
-import { parseSkills } from "./parserService.js";
+import { normalizeSkillForComparison, normalizeTextForSearch, parseSkills } from "./parserService.js";
 
 export type AnalysisResult = {
   resumeSkills: string[]
@@ -10,6 +10,38 @@ export type AnalysisResult = {
   reasons: string[]
 }
 
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+
+const matchesJobSkill = (
+  jobSkill: string,
+  resumeSkills: string[],
+  normalizedResumeText: string,
+): boolean => {
+  const normalizedJobSkill = normalizeSkillForComparison(jobSkill)
+
+  if (!normalizedJobSkill) {
+    return false
+  }
+
+  const directTokenMatch = resumeSkills.some(
+    (resumeSkill) =>
+      normalizeSkillForComparison(resumeSkill) === normalizedJobSkill,
+  )
+
+  if (directTokenMatch) {
+    return true
+  }
+
+  const regexText = normalizedJobSkill
+    .split(/\s+/)
+    .map((part) => escapeRegExp(part))
+    .join("\\s+")
+
+  const regex = new RegExp(`\\b${regexText}\\b`, "i")
+  return regex.test(normalizedResumeText)
+}
+
 export const analyzeResumeData = ({
   resumeText,
   jdText,
@@ -19,14 +51,19 @@ export const analyzeResumeData = ({
 }): AnalysisResult => {
   const resumeSkills = parseSkills(resumeText)
   const jdSkills = parseSkills(jdText)
+  const normalizedResumeText = normalizeTextForSearch(resumeText)
 
   const matchedSkills = jdSkills.filter((jobSkill) =>
-    resumeSkills.some((resumeSkill) => resumeSkill.toLowerCase() === jobSkill.toLowerCase()),
+    matchesJobSkill(jobSkill, resumeSkills, normalizedResumeText),
   )
 
   const missingSkills = jdSkills.filter(
     (jobSkill) =>
-      !matchedSkills.some((skill) => skill.toLowerCase() === jobSkill.toLowerCase()),
+      !matchedSkills.some(
+        (skill) =>
+          normalizeSkillForComparison(skill) ===
+          normalizeSkillForComparison(jobSkill),
+      ),
   )
 
   const matchPercentage = jdSkills.length

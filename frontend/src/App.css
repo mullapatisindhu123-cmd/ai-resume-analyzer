@@ -403,6 +403,17 @@ textarea:focus-visible {
   color: #facc15;
 }
 
+.rating-star.empty {
+  color: #cbd5e1;
+}
+
+.rating-star.half {
+  color: transparent;
+  background: linear-gradient(90deg, #facc15 50%, #cbd5e1 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
 .explanation-card {
   grid-column: 1 / -1;
 }

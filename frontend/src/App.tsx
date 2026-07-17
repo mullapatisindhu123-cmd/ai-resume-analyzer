@@ -31,8 +31,11 @@ function App() {
 
   const starRating = useMemo(() => {
     if (!result) return 0
-    return Math.min(5, Math.max(1, Math.ceil(result.matchPercentage / 20)))
+    return Math.min(5, result.matchPercentage / 20)
   }, [result])
+
+  const fullStars = Math.floor(starRating)
+  const hasHalfStar = starRating - fullStars >= 0.5
 
   const scoreColor = useMemo(() => {
     if (!result) return 'secondary'
@@ -273,7 +276,15 @@ function App() {
           <article className="card metric-card verdict-card">
             <div className="metric-label">Fit Verdict ✅</div>
             <div className={`verdict-value ${result ? '' : 'pending-value'}`}>{result?.verdict ?? 'Awaiting analysis'}</div>
-            <div className={`verdict-stars ${result ? '' : 'pending-stars'}`}>{'★'.repeat(starRating) + '☆'.repeat(5 - starRating)}</div>
+            <div
+              className={`verdict-stars ${result ? '' : 'pending-stars'}`}
+              aria-label={result ? `${starRating} out of 5 stars` : undefined}
+            >
+              {Array.from({ length: 5 }, (_, index) => {
+                const type = index < fullStars ? 'full' : index === fullStars && hasHalfStar ? 'half' : 'empty'
+                return <span key={index} className={`rating-star ${type}`}>★</span>
+              })}
+            </div>
           </article>
         </div>
 
@@ -298,7 +309,7 @@ function App() {
                 </div>
                 <div className="insight-block">
                   <h3>How your resume is analyzed</h3>
-                  <p>The analyzer reads short skill entries separated by lines, commas, bullets, or semicolons in your resume and job description. It then compares entries case-insensitively.</p>
+                  <p>The analyzer reads entries separated by lines, commas, bullets, or semicolons and searches the complete resume text. It recognizes common forms such as React.js/ReactJS and REST API/REST APIs.</p>
                   <p>It reports skills present in both, highlights required skills not found, and assigns a fit verdict: Qualified (80%+), Almost There (50–79%), or Not Yet (below 50%). Use one skill per line for the most accurate comparison.</p>
                 </div>
                 <div className="insight-block">
