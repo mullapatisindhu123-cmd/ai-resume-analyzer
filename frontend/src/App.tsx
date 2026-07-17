@@ -226,7 +226,7 @@ function App() {
         <div className="cards-grid">
           <article className="card metric-card success-card">
             <div className="metric-label">Matched Skills 🎯</div>
-            <div className="metric-value">{result?.matchedSkills.length ?? 0} Skills</div>
+            <div className={`metric-value ${result ? '' : 'pending-value'}`}>{result?.matchedSkills.length ?? 0} Skills</div>
             <div className="metric-list">
               {result?.matchedSkills.length ? (
                 result.matchedSkills.slice(0, 5).map((skill) => (
@@ -242,7 +242,7 @@ function App() {
 
           <article className="card metric-card warning-card">
             <div className="metric-label">Missing Skills ⚠️</div>
-            <div className="metric-value">{result?.missingSkills.length ?? 0} Skills</div>
+            <div className={`metric-value ${result ? '' : 'pending-value'}`}>{result?.missingSkills.length ?? 0} Skills</div>
             <div className="metric-list">
               {result?.missingSkills.length ? (
                 result.missingSkills.slice(0, 5).map((skill) => (
@@ -258,13 +258,13 @@ function App() {
 
           <article className="card metric-card score-card">
             <div className="metric-label">Match Score 📊</div>
-            <div className="score-value">{result?.matchPercentage ?? 0}%</div>
+            <div className={`score-value ${result ? '' : 'pending-value'}`}>{result?.matchPercentage ?? 0}%</div>
             <div className="progress-bar">
               <div
                 className={`progress-fill ${scoreColor}`}
                 style={{ width: `${result?.matchPercentage ?? 0}%` }}
             />
-            <p className="score-caption">
+            <p className={`score-caption ${result ? '' : 'pending-caption'}`}>
               {result ? `${result.matchedSkills.length} of ${result.jdSkills.length} required skills matched` : 'Analyze a resume to calculate the score.'}
             </p>
             </div>
@@ -272,8 +272,8 @@ function App() {
 
           <article className="card metric-card verdict-card">
             <div className="metric-label">Fit Verdict ✅</div>
-            <div className="verdict-value">{result?.verdict ?? 'Awaiting analysis'}</div>
-            <div className="verdict-stars">{'★'.repeat(starRating) + '☆'.repeat(5 - starRating)}</div>
+            <div className={`verdict-value ${result ? '' : 'pending-value'}`}>{result?.verdict ?? 'Awaiting analysis'}</div>
+            <div className={`verdict-stars ${result ? '' : 'pending-stars'}`}>{'★'.repeat(starRating) + '☆'.repeat(5 - starRating)}</div>
           </article>
         </div>
 

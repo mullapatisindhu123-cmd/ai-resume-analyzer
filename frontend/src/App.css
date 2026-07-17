@@ -24,6 +24,8 @@ body {
   background: #f1f5f9;
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
 }
 
 #root {
@@ -48,7 +50,7 @@ body {
 }
 
 .nav-brand {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: 0.02em;
   color: #312e81;
@@ -73,8 +75,8 @@ body {
   margin: 0;
   max-width: 780px;
   color: #e0e7ff;
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-size: 1.125rem;
+  line-height: 1.6;
 }
 
 .form-grid {
@@ -96,14 +98,15 @@ body {
 
 .card-header h2 {
   margin: 0;
-  font-size: 1.55rem;
+  font-size: 1.8rem;
   color: var(--text);
 }
 
 .card-header p {
   margin: 8px 0 0;
   color: var(--text-muted);
-  line-height: 1.8;
+  font-size: 1.125rem;
+  line-height: 1.65;
 }
 
 .card-section {
@@ -151,18 +154,21 @@ body {
 .score-caption {
   margin: 0;
   color: var(--text-soft);
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
+
+.pending-caption { color: #94a3b8; }
 
 .section-title {
   font-weight: 700;
   color: var(--text);
+  font-size: 1.125rem;
 }
 
 .accepted-formats {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .file-upload-group {
@@ -213,13 +219,14 @@ textarea {
   border: 1px solid #d1d5db;
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 1rem;
-  line-height: 1.7;
+  font-size: 1.125rem;
+  line-height: 1.6;
   resize: vertical;
 }
 
 textarea::placeholder {
-  color: var(--text-muted);
+  color: #94a3b8;
+  opacity: 1;
 }
 
 textarea.example-text {
@@ -281,7 +288,7 @@ textarea:focus-visible {
 
 .results-title h2 {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: 1.8rem;
 }
 
 .cards-grid {
@@ -296,20 +303,27 @@ textarea:focus-visible {
 }
 
 .metric-label {
-  color: var(--text-muted);
-  font-size: 0.95rem;
+  color: #64748b;
+  font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
 }
 
 .metric-value,
 .score-value,
 .verdict-value {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.65rem;
+  line-height: 1.25;
   color: var(--text);
   font-weight: 700;
+}
+
+.pending-value {
+  color: #94a3b8;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .metric-list {
@@ -336,6 +350,12 @@ textarea:focus-visible {
 .metric-chip.missing {
   background: rgba(245, 158, 11, 0.12);
   color: #b45309;
+}
+
+.empty-state {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .metric-chip.required {
@@ -396,6 +416,8 @@ textarea:focus-visible {
   gap: 12px;
 }
 
+.pending-stars { color: #cbd5e1; }
+
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -425,7 +447,9 @@ textarea:focus-visible {
 
 .placeholder-text {
   margin: 0;
-  color: var(--text-muted);
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .footer-bar {
