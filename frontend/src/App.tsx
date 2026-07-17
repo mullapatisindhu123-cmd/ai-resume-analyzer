@@ -1,4 +1,4 @@
-import { type ChangeEvent, useMemo, useState } from 'react'
+import { type ChangeEvent, useMemo, useRef, useState } from 'react'
 import './App.css'
 
 type AnalysisResult = {
@@ -25,6 +25,7 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
   const canAnalyze = Boolean((resumeFile || resumeText.trim()) && jdText.trim())
 
   const starRating = useMemo(() => {
@@ -106,10 +107,23 @@ function App() {
           <div className="card-section">
             <div className="section-title">Upload your resume</div>
             <div className="accepted-formats">Accepted formats: PDF, DOCX</div>
-            <label className="file-upload-label">
-              <input type="file" accept=".pdf,.docx" onChange={handleFileChange} />
-              <button type="button" className="upload-button">⬆️ Upload Resume</button>
-            </label>
+            <div className="file-upload-group">
+              <input
+                ref={fileInputRef}
+                type="file"
+                name="resume"
+                accept=".pdf,.docx"
+                onChange={handleFileChange}
+                className="hidden-file-input"
+              />
+              <button
+                type="button"
+                className="upload-button"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                ⬆️ Upload Resume
+              </button>
+            </div>
             <div className="selected-file">
               {resumeFile ? <span>✔ {resumeFile.name}</span> : <span>No file selected</span>}
             </div>

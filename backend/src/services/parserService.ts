@@ -1,4 +1,5 @@
-import mammoth from "mammoth";
+import mammoth from "mammoth"
+import { PDFParse } from "pdf-parse"
 
 const normalizeText = (text: string): string =>
   text
@@ -10,23 +11,15 @@ export const extractTextFromResumeFile = async (
   file: Express.Multer.File,
 ): Promise<string> => {
   const fileName = file.originalname.toLowerCase()
-  const pdfParseModule = await import("pdf-parse")
-  const pdfParse =
-    typeof pdfParseModule === "function"
-      ? pdfParseModule
-      : typeof pdfParseModule.default === "function"
-      ? pdfParseModule.default
-      : typeof pdfParseModule.parse === "function"
-      ? pdfParseModule.parse
-      : undefined
-
-  if (!pdfParse) {
-    throw new Error("Unable to load pdf-parse module for resume parsing.")
-  }
 
   if (fileName.endsWith(".pdf")) {
-    const data = await pdfParse(file.buffer)
-    return normalizeText(data.text)
+    const parser = new PDFParse({ data: file.buffer })
+    try {
+      const result = await parser.getText()
+      return normalizeText(result.text)
+    } finally {
+      await parser.destroy()
+    }
   }
 
   if (fileName.endsWith(".docx")) {
